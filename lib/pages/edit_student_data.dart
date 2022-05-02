@@ -1,19 +1,43 @@
 // ignore_for_file: camel_case_types
 
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class editStudentData extends StatefulWidget {
-  const editStudentData({Key? key}) : super(key: key);
+  var studentIndex;
+  String name, email, password;
+  editStudentData(
+    this.studentIndex,
+    this.name,
+    this.email,
+    this.password,
+  );
 
   @override
   State<editStudentData> createState() => _editStudentDataState();
 }
 
 class _editStudentDataState extends State<editStudentData> {
+  var name = "";
+  var email = "";
+  var password = "";
+  final _studentname = TextEditingController();
+  final _studentemail = TextEditingController();
+  final _studentpassword = TextEditingController();
   final _formkey = GlobalKey<FormState>();
 
-  updateUser() {
-    print('user updated');
+  @override
+  void initState() {
+    _studentemail.text = widget.email;
+    _studentname.text = widget.name;
+    _studentpassword.text = widget.password;
+  }
+
+  Future updateUser({required String ename, eemail, epassword}) async {
+    await FirebaseFirestore.instance
+        .collection('students')
+        .doc(widget.studentIndex)
+        .update({'name': ename, 'email': eemail, 'password': epassword});
   }
 
   @override
@@ -27,8 +51,17 @@ class _editStudentDataState extends State<editStudentData> {
           child: ListView(children: [
             Container(
               margin: EdgeInsets.all(10),
+              alignment: AlignmentDirectional.topCenter,
+              child: Image.asset(
+                'images/studentImages.jpg',
+                fit: BoxFit.fill,
+              ),
+            ),
+            SizedBox(height: 5),
+            Container(
+              margin: EdgeInsets.all(10),
               child: TextFormField(
-                  initialValue: "Name here",
+                  controller: _studentname,
                   autofocus: false,
                   onChanged: (value) => {},
                   decoration: const InputDecoration(
@@ -44,7 +77,7 @@ class _editStudentDataState extends State<editStudentData> {
             Container(
               margin: const EdgeInsets.all(10),
               child: TextFormField(
-                  initialValue: "example@email.com",
+                  controller: _studentemail,
                   autofocus: false,
                   onChanged: (value) => {},
                   decoration: const InputDecoration(
@@ -60,7 +93,7 @@ class _editStudentDataState extends State<editStudentData> {
             Container(
               margin: const EdgeInsets.all(10),
               child: TextFormField(
-                  initialValue: "Password",
+                  controller: _studentpassword,
                   autofocus: false,
                   onChanged: (value) => {},
                   decoration: const InputDecoration(
@@ -80,12 +113,20 @@ class _editStudentDataState extends State<editStudentData> {
                 ElevatedButton(
                     onPressed: () {
                       if (_formkey.currentState!.validate()) {
-                        updateUser();
+                        setState(() {
+                          name = _studentname.text;
+                          email = _studentemail.text;
+                          password = _studentpassword.text;
+                        });
+                        updateUser(
+                            ename: name, eemail: email, epassword: password);
                         Navigator.pop(context);
                       }
                     },
                     child: const Text('Update')),
-                ElevatedButton(onPressed: null, child: const Text('Reset'))
+                ElevatedButton(
+                    onPressed: () => {print(widget.studentIndex)},
+                    child: const Text('Reset'))
               ],
             ))
           ]),

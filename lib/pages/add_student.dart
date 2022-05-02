@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class addStudentPage extends StatefulWidget {
   const addStudentPage({Key? key}) : super(key: key);
@@ -32,7 +33,10 @@ class _addStudentPageState extends State<addStudentPage> {
     _studentpassword.clear();
   }
 
-  addUser() {
+  Future addUser({required String name, email, password}) async {
+    final addStudent = FirebaseFirestore.instance.collection('students').doc();
+    final students = {'name': name, 'email': email, 'password': password};
+    await addStudent.set(students);
     print('User Added');
   }
 
@@ -107,7 +111,10 @@ class _addStudentPageState extends State<addStudentPage> {
                                       name = _studentname.text;
                                       email = _studentemail.text;
                                       password = _studentpassword.text;
-                                      addUser();
+                                      addUser(
+                                          name: name,
+                                          email: email,
+                                          password: password);
                                       clearText();
                                     })
                                   }
