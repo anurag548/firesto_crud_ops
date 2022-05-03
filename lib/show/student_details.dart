@@ -15,10 +15,26 @@ class _studDetailsState extends State<studDetails> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 60.0,
-        title: Text(widget.name),
-        bottom: PreferredSize(
-            child: Text(widget.email),
-            preferredSize: const Size.fromHeight(10)),
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.name,
+              style: const TextStyle(color: Colors.white70, fontSize: 20.0),
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            Text(
+              widget.email,
+              style: const TextStyle(color: Colors.white54, fontSize: 14.0),
+            )
+          ],
+        ),
+        automaticallyImplyLeading: false,
+        leading: const CircleAvatar(
+            backgroundImage: AssetImage('images/studentImages.jpg')),
       ),
       body: Container(
         height: 200,
